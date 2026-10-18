@@ -1,0 +1,24 @@
+{
+  "period": {"start": "2030-01-01", "end": "2030-03-31"},
+  "currency": "USD",
+  "minor_unit_digits": 2,
+  "locale": "en-US",
+  "review_threshold": "100.00",
+  "major_expense_threshold": "500.00",
+  "currency_settings": {
+    "EUR": {"minor_unit_digits": 2, "review_threshold": "100.00", "major_expense_threshold": "500.00"},
+    "JPY": {"minor_unit_digits": 0, "review_threshold": "10000", "major_expense_threshold": "50000"},
+    "KWD": {"minor_unit_digits": 3, "review_threshold": "30.000", "major_expense_threshold": "150.000"}
+  },
+  "inventory_approved": false,
+  "inventory_evidence": "",
+  "accounts": [
+    {"id": "dollar-account", "name": "Dollar account", "currency": "USD", "status": "expected", "full_review": false},
+    {"id": "euro-account", "name": "Euro account", "currency": "EUR", "status": "expected", "full_review": false},
+    {"id": "yen-account", "name": "Yen account", "currency": "JPY", "status": "expected", "full_review": false},
+    {"id": "dinar-account", "name": "Dinar account", "currency": "KWD", "status": "expected", "full_review": false}
+  ],
+  "excluded_transaction_types": ["credit_card_payment", "own_account_transfer", "personal_transfer_in", "personal_transfer_out", "investment_transfer", "cash_withdrawal", "wallet_top_up"],
+  "special_reviews": [],
+  "password_policy": {"input": "interactive", "try_empty_first": true}
+}

@@ -1,0 +1,19 @@
+{
+  "period": {"start": "2030-01-01", "end": "2030-03-31"},
+  "currency": "USD",
+  "minor_unit_digits": 2,
+  "review_threshold": "100.00",
+  "major_expense_threshold": "500.00",
+  "inventory_approved": true,
+  "inventory_evidence": "FICTIONAL DEMO: the invented two-account roster is complete.",
+  "accounts": [
+    {"id": "daily-bank", "name": "Demo bank", "status": "received", "full_review": false},
+    {"id": "everyday-card", "name": "Demo card", "status": "received", "full_review": false}
+  ],
+  "excluded_transaction_types": ["credit_card_payment", "own_account_transfer", "personal_transfer_in", "personal_transfer_out", "investment_transfer", "cash_withdrawal", "wallet_top_up"],
+  "special_reviews": [
+    {"name": "Demo store", "accounts": ["everyday-card"], "description_regex": "(?i)demo store"},
+    {"name": "Demo personal transfers", "accounts": ["daily-bank"], "transaction_types": ["personal_transfer_in", "personal_transfer_out"]}
+  ],
+  "password_policy": {"input": "interactive", "try_empty_first": true}
+}

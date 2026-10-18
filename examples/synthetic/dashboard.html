@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Spend Review | Spending explorer</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#f6f7fa,#111820);--panel:light-dark(#fff,#1a2531);--ink:light-dark(#17283a,#e8eef5);--muted:light-dark(#52677b,#afbed0);--line:light-dark(#dbe3ec,#354556);--accent:light-dark(#165c7b,#7ec7df)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:32px 24px}header{margin-bottom:28px}h1{font-size:32px;letter-spacing:-.035em;margin:6px 0}h2{font-size:19px;margin:0 0 18px}p{margin:8px 0}.muted{color:var(--muted)}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em}.controls{display:flex;flex-wrap:wrap;gap:16px;margin:24px 0}.controls label{display:flex;flex-direction:column;gap:6px;min-width:145px;flex:1}select{font:inherit;padding:10px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px}button{font:inherit;color:var(--accent);background:none;border:0;padding:6px 0;text-align:left;cursor:pointer}button:hover{text-decoration:underline}.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}section{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;min-width:0}.summary{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin:20px 0}.total{font-size:30px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}#chart{width:100%;min-height:320px;display:flex;align-items:center;justify-content:center}svg{max-width:100%;height:auto}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:11px 6px;border-bottom:1px solid var(--line);text-align:left;overflow-wrap:anywhere}th{color:var(--muted);font-weight:500}.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.swatch{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:8px}.notice{padding:14px 0;color:var(--muted);font-size:14px}.detail{margin-top:24px}.table-wrap{overflow:auto}details{margin-top:24px;color:var(--muted)}#hint{min-height:22px;font-size:14px;color:var(--muted)}footer{margin-top:28px;font-size:13px;color:var(--muted)}@media(max-width:720px){.grid{grid-template-columns:1fr}main{padding:22px 16px}section{padding:18px}h1{font-size:27px}.total{font-size:25px}.controls label{min-width:125px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+.summary{flex-wrap:wrap}.total{white-space:nowrap;overflow-wrap:normal;max-width:100%;overflow:auto}.detail table{min-width:620px}.detail td:first-child,.detail th{white-space:nowrap}
+@media(max-width:720px){.summary{flex-direction:column;align-items:flex-start;gap:8px}}
+</style>
+</head>
+<body><main>
+<header><div class="eyebrow">Local spending report</div><h1>See where your money went</h1><p id="period" class="muted"></p><p id="status" class="muted"></p></header>
+<div class="controls">
+<label>Currency<select id="currency"></select></label>
+<label>Account<select id="account"></select></label>
+<label>Month<select id="month"></select></label>
+<label>Group by<select id="group"><option value="account">Account</option><option value="payee">Payee</option></select></label>
+<label>Chart<select id="mode"><option value="pie">Donut</option><option value="bar">Bars</option></select></label>
+<label>Include installments<select id="emi"><option value="yes">Yes, once</option><option value="no">Expenses only</option></select></label>
+</div>
+<div class="summary"><span>Recorded spending in this view</span><strong id="total" class="total" aria-live="polite"></strong></div>
+<div class="grid"><section><h2 id="chart-title">Spending breakdown</h2><div id="chart" role="img" aria-label="Spending breakdown"></div><p id="hint" aria-live="polite"></p></section>
+<section><h2>Exact amounts</h2><p class="muted">Select a group to inspect its contributing transactions.</p><div class="table-wrap"><table><thead><tr><th>Group</th><th class="num">Amount</th><th class="num">Share</th></tr></thead><tbody id="groups"></tbody></table></div></section></div>
+<section class="detail"><h2 id="detail-title">Contributing transactions</h2><div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Account</th><th class="num">Contribution</th></tr></thead><tbody id="transactions"></tbody></table></div><button id="clear" type="button" hidden>Show all groups</button></section>
+<details><summary>Review status and limitations</summary><ul id="warnings"></ul></details>
+<footer>This file contains the displayed transaction data. Keep real reports private. No network requests, tracking or browser storage. Currency totals are never added together and no exchange rate is assumed. Separate credits are not automatically netted.</footer>
+</main>
+<script id="budget-data" type="application/json">{"status": "FINAL_WITH_LIMITATIONS", "period": {"start": "2030-01-01", "end": "2030-03-31", "frequency": "custom"}, "locale": "en-US", "currencies": {"USD": {"digits": 2}}, "accounts": [{"id": "daily-bank", "name": "Demo bank", "currency": "USD"}, {"id": "everyday-card", "name": "Demo card", "currency": "USD"}], "warnings": ["Separate credit not netted: CARD-4", "Demo unmatched credit is separate, not netted."], "rows": [{"id": "BANK-1", "date": "2030-01-05", "currency": "USD", "account": "daily-bank", "payee": "Demo local market", "description": "DEMO LOCAL MARKET", "expense": "10000", "emi": "0"}, {"id": "BANK-2", "date": "2030-01-07", "currency": "USD", "account": "daily-bank", "payee": "Demo recipient", "description": "DEMO PERSONAL TRANSFER", "expense": "0", "emi": "0"}, {"id": "BANK-3", "date": "2030-02-06", "currency": "USD", "account": "daily-bank", "payee": "Demo card", "description": "DEMO CARD SETTLEMENT", "expense": "0", "emi": "0"}, {"id": "BANK-4", "date": "2030-03-05", "currency": "USD", "account": "daily-bank", "payee": "Demo loan", "description": "DEMO LOAN INSTALLMENT", "expense": "0", "emi": "20000"}, {"id": "CARD-1", "date": "2030-01-08", "currency": "USD", "account": "everyday-card", "payee": "Demo store", "description": "DEMO STORE PURCHASE A", "expense": "30000", "emi": "0"}, {"id": "CARD-2", "date": "2030-02-08", "currency": "USD", "account": "everyday-card", "payee": "Demo store", "description": "DEMO STORE PURCHASE B", "expense": "30000", "emi": "0"}, {"id": "CARD-3", "date": "2030-02-10", "currency": "USD", "account": "everyday-card", "payee": "Demo store", "description": "DEMO STORE RETURN", "expense": "-5000", "emi": "0"}, {"id": "CARD-4", "date": "2030-03-01", "currency": "USD", "account": "everyday-card", "payee": "Demo separate credit", "description": "DEMO UNMATCHED CREDIT", "expense": "0", "emi": "0"}, {"id": "CARD-5", "date": "2030-03-03", "currency": "USD", "account": "everyday-card", "payee": "Demo exact threshold", "description": "DEMO EXACT MAJOR THRESHOLD", "expense": "50000", "emi": "0"}]}</script>
+<script>
+(()=>{
+'use strict';
+const data=JSON.parse(document.getElementById('budget-data').textContent), $=id=>document.getElementById(id);
+try{new Intl.NumberFormat(data.locale);}catch{data.locale='en-US';data.warnings.push('Unsupported display locale; using en-US formatting. Amounts are unchanged.');}
+const colors=['#2580a3','#dc9851','#79985c','#9c7ca8','#b56d70','#6e8d9a'];
+let selected=null;
+function option(select,value,label){const node=document.createElement('option');node.value=value;node.textContent=label;select.append(node);}
+function formatMinor(value,code){
+ const digits=data.currencies[code].digits,scale=10n**BigInt(digits),negative=value<0n,abs=negative?-value:value,whole=abs/scale;
+ const formatter=new Intl.NumberFormat(data.locale,{style:'currency',currency:code,currencyDisplay:'code',minimumFractionDigits:digits,maximumFractionDigits:digits});
+ const signed=negative?(whole===0n?-0:-whole):whole;
+ return formatter.formatToParts(signed).map(part=>part.type==='fraction'?(abs%scale).toString().padStart(digits,'0'):part.value).join('');
+}
+function fraction(value,total){return total===0n?'n/a':(Number(value*10000n/total)/100).toFixed(1)+'%';}
+function svgNode(name,attributes={}){const node=document.createElementNS('http://www.w3.org/2000/svg',name);for(const [k,v]of Object.entries(attributes))node.setAttribute(k,v);return node;}
+function resetOptions(){
+ const code=$('currency').value,old=$('account').value;$('account').replaceChildren();option($('account'),'all','All accounts');
+ data.accounts.filter(a=>a.currency===code).forEach(a=>option($('account'),a.id,a.name));
+ if([...$('account').options].some(o=>o.value===old))$('account').value=old;
+ const oldMonth=$('month').value;$('month').replaceChildren();option($('month'),'all','Whole period');
+ [...new Set(data.rows.filter(r=>r.currency===code).map(r=>r.date.slice(0,7)))].sort().forEach(m=>option($('month'),m,m));
+ if([...$('month').options].some(o=>o.value===oldMonth))$('month').value=oldMonth;
+}
+function groupKey(row){return $('group').value==='account'?row.account:row.payee;}
+function groupName(key){return $('group').value==='account'?(data.accounts.find(a=>a.id===key)?.name||key):key||'Unspecified payee';}
+function render(){
+ const code=$('currency').value,showEmi=$('emi').value==='yes';
+ const filtered=data.rows.filter(r=>r.currency===code&&($('account').value==='all'||r.account===$('account').value)&&($('month').value==='all'||r.date.slice(0,7)===$('month').value));
+ const contributing=filtered.map(r=>({...r,value:BigInt(r.expense)+(showEmi?BigInt(r.emi):0n)})).filter(r=>r.value!==0n);
+ const values=new Map();for(const row of contributing){const key=groupKey(row);values.set(key,(values.get(key)||0n)+row.value);}
+ const groups=[...values.entries()].filter(([,v])=>v!==0n).sort((a,b)=>a[1]>b[1]?-1:a[1]<b[1]?1:a[0].localeCompare(b[0]));
+ const total=contributing.reduce((sum,r)=>sum+r.value,0n);$('total').textContent=formatMinor(total,code);
+ $('chart-title').textContent='Spending by '+($('group').value==='account'?'account':'payee')+' ('+code+')';
+ const negative=groups.some(([,v])=>v<0n),bar=$('mode').value==='bar'||negative;
+ $('hint').textContent=negative?'Negative net groups are shown as signed bars, not a misleading pie.':groups.length?'Amounts include confirmed refund offsets.':'No included spending in this selection.';
+ const chart=$('chart');chart.replaceChildren();
+ const svg=svgNode('svg',{viewBox:bar?'0 0 460 '+Math.max(320,groups.length*40+40):'0 0 360 320',width:'100%',role:'img','aria-label':$('chart-title').textContent});
+ if(groups.length){
+  if(bar){
+   const max=groups.reduce((m,[,v])=>(v<0n?-v:v)>m?(v<0n?-v:v):m,0n),zero=negative?230:12;
+   groups.forEach(([key,value],i)=>{const length=Number((value<0n?-value:value)*180000n/max)/1000,y=20+i*40;
+    const rect=svgNode('rect',{x:value<0n?zero-length:zero,y,width:Math.max(length,.5),height:18,rx:3,fill:colors[i%colors.length]});
+    const title=svgNode('title');title.textContent=groupName(key)+': '+formatMinor(value,code);rect.append(title);svg.append(rect);
+    const label=svgNode('text',{x:12,y:y+32,fill:'currentColor','font-size':'12'});label.textContent=groupName(key).slice(0,55);svg.append(label);
+   });
+  }else{
+   let angle=-Math.PI/2;
+   groups.forEach(([key,value],i)=>{const portion=Number(value*1000000n/total)/1000000,sweep=portion*Math.PI*2,end=angle+sweep,r=112,cx=180,cy=150;
+    let shape;if(groups.length===1){shape=svgNode('circle',{cx,cy,r,fill:colors[i%colors.length]});}
+    else{const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle),x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);shape=svgNode('path',{d:`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${sweep>Math.PI?1:0} 1 ${x2} ${y2} Z`,fill:colors[i%colors.length]});}
+    const title=svgNode('title');title.textContent=groupName(key)+': '+formatMinor(value,code)+' ('+fraction(value,total)+')';shape.append(title);svg.append(shape);angle=end;
+   });
+   svg.append(svgNode('circle',{cx:180,cy:150,r:66,fill:'var(--panel)'}));
+   const label=svgNode('text',{x:180,y:150,'text-anchor':'middle',fill:'currentColor','font-size':'16'});label.textContent=code;svg.append(label);
+  }
+  chart.append(svg);
+ }else{chart.textContent='No spending to chart';}
+ $('groups').replaceChildren();
+ for(const [index,[key,value]]of groups.entries()){
+  const tr=document.createElement('tr'),td=document.createElement('td'),button=document.createElement('button');button.type='button';
+  const swatch=document.createElement('span');swatch.className='swatch';swatch.style.backgroundColor=colors[index%colors.length];swatch.setAttribute('aria-hidden','true');
+  button.append(swatch,document.createTextNode(groupName(key)));button.addEventListener('click',()=>{selected=key;render();});td.append(button);tr.append(td);
+  for(const text of [formatMinor(value,code),fraction(value,total)]){const cell=document.createElement('td');cell.className='num';cell.textContent=text;tr.append(cell);}$('groups').append(tr);
+ }
+ if(selected!==null&&!values.has(selected))selected=null;
+ const details=selected===null?contributing:contributing.filter(r=>groupKey(r)===selected);
+ $('detail-title').textContent=selected===null?'Contributing transactions':groupName(selected)+': contributing transactions';$('clear').hidden=selected===null;
+ $('transactions').replaceChildren();
+ for(const row of details){const tr=document.createElement('tr');for(const [index,text]of [row.date,row.description,data.accounts.find(a=>a.id===row.account)?.name||row.account,formatMinor(row.value,code)].entries()){const cell=document.createElement('td');cell.textContent=text;if(index===3)cell.className='num';tr.append(cell);}$('transactions').append(tr);}
+}
+$('period').textContent=data.period.start+' to '+data.period.end+' · Currency-separated, evidence-based totals';
+$('status').textContent='Review status: '+data.status+(data.status==='DRAFT'?' · Partial data; not a complete-period total':'');
+Object.keys(data.currencies).forEach(code=>option($('currency'),code,code));
+for(const message of data.warnings){const item=document.createElement('li');item.textContent=message;$('warnings').append(item);}
+for(const id of ['currency','account','month','group','mode','emi'])$(id).addEventListener('change',()=>{selected=null;if(id==='currency')resetOptions();render();});
+$('clear').addEventListener('click',()=>{selected=null;render();});resetOptions();render();
+})();
+</script></body></html>

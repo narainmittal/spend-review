@@ -1,0 +1,4 @@
+interface:
+  display_name: "Budget Analysis"
+  short_description: "Review statements and consolidate configurable spending"
+  default_prompt: "Use $budget-analysis to configure my private budget workflow, review each account and consolidate approved spending."

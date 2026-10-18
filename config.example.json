@@ -1,0 +1,21 @@
+{
+  "period": {"start": "2030-01-01", "end": "2030-03-31"},
+  "currency": "USD",
+  "minor_unit_digits": 2,
+  "locale": "en-US",
+  "currency_settings": {},
+  "review_threshold": "100.00",
+  "major_expense_threshold": "500.00",
+  "inventory_approved": false,
+  "inventory_evidence": "",
+  "accounts": [
+    {"id": "daily-bank", "name": "Daily bank", "status": "expected", "full_review": false},
+    {"id": "everyday-card", "name": "Everyday card", "status": "expected", "full_review": false}
+  ],
+  "excluded_transaction_types": [
+    "credit_card_payment", "own_account_transfer", "personal_transfer_in",
+    "personal_transfer_out", "investment_transfer", "cash_withdrawal", "wallet_top_up"
+  ],
+  "special_reviews": [],
+  "password_policy": {"input": "interactive", "try_empty_first": true}
+}

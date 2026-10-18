@@ -1,0 +1,6 @@
+transaction_id,transaction_date,amount,currency,direction,raw_description,cleaned_payee,transaction_type,included,emi,review_required,source_file,source_row,link_evidence,notes
+BANK-1,2030-01-05,100.00,USD,debit,DEMO LOCAL MARKET,Demo local market,purchase,yes,no,no,synthetic-bank.txt,row 1,,Exact review threshold is not greater than threshold
+BANK-2,2030-01-07,700.00,USD,debit,DEMO PERSONAL TRANSFER,Demo recipient,personal_transfer_out,no,no,no,synthetic-bank.txt,row 2,,Excluded personal transfer
+BANK-3,2030-02-06,650.00,USD,debit,DEMO CARD SETTLEMENT,Demo card,credit_card_payment,no,no,no,synthetic-bank.txt,row 3,,Not another expense
+BANK-4,2030-03-05,200.00,USD,debit,DEMO LOAN INSTALLMENT,Demo loan,loan_emi,no,yes,no,synthetic-bank.txt,row 4,Synthetic loan installment record,Count once in EMI
+BANK-5,2030-04-01,900.00,USD,debit,DEMO OUTSIDE PERIOD,Demo outside,purchase,yes,no,no,synthetic-bank.txt,row 5,,Outside reporting period

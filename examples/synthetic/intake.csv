@@ -1,0 +1,3 @@
+source_file,account_id,statement_start,statement_end,notes
+synthetic-bank.txt,daily-bank,2030-01-01,2030-04-01,Entirely invented demo records
+synthetic-card.txt,everyday-card,2030-01-01,2030-03-31,Entirely invented demo records

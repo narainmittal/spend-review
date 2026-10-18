@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "spend-review",
+  "version": "0.2.0",
+  "description": "Evidence-first personal budget analysis with configurable reviews and local validation."
+}

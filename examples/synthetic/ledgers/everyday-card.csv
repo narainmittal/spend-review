@@ -1,0 +1,6 @@
+transaction_id,transaction_date,amount,currency,direction,raw_description,cleaned_payee,transaction_type,included,emi,review_required,source_file,source_row,link_evidence,notes
+CARD-1,2030-01-08,300.00,USD,debit,DEMO STORE PURCHASE A,Demo store,purchase,yes,no,no,synthetic-card.txt,row 1,,Synthetic purchase
+CARD-2,2030-02-08,300.00,USD,debit,DEMO STORE PURCHASE B,Demo store,purchase,yes,no,no,synthetic-card.txt,row 2,,Synthetic purchase
+CARD-3,2030-02-10,50.00,USD,credit,DEMO STORE RETURN,Demo store,linked_refund,yes,no,yes,synthetic-card.txt,row 3,FICTIONAL return against CARD-1,Offset once
+CARD-4,2030-03-01,5.00,USD,credit,DEMO UNMATCHED CREDIT,Demo separate credit,unlinked_merchant_credit,no,no,yes,synthetic-card.txt,row 4,,Separate because no link is established
+CARD-5,2030-03-03,500.00,USD,debit,DEMO EXACT MAJOR THRESHOLD,Demo exact threshold,purchase,yes,no,no,synthetic-card.txt,row 5,,Exactly threshold is omitted from major note

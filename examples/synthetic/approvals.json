@@ -1,0 +1,9 @@
+{
+  "accounts": {
+    "daily-bank": {"classification_approved": true, "coverage_approved": true, "reconciliation_approved": true, "evidence": "FICTIONAL DEMO REVIEW on 2030-04-02; invented source rows are complete."},
+    "everyday-card": {"classification_approved": true, "coverage_approved": true, "reconciliation_approved": true, "evidence": "FICTIONAL DEMO REVIEW on 2030-04-02; invented source rows are complete."}
+  },
+  "accepted_limitations": [
+    {"description": "Demo unmatched credit is separate, not netted.", "evidence": "FICTIONAL DEMO: CARD-4 has no confirmed original purchase."}
+  ]
+}
